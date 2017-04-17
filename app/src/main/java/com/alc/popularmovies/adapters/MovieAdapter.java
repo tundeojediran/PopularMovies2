@@ -14,6 +14,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by dannytee on 17/04/2017.
  */
@@ -57,7 +60,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
         Context context = movieAdapterViewHolder.mMoviePosterImageView.getContext();
         String posterPath = "http://image.tmdb.org/t/p/w500/" + movieItem.getPoster_path();
-        Picasso.with(context).load(posterPath).into(movieAdapterViewHolder.mMoviePosterImageView);
+        Picasso.with(context)
+                .load(posterPath)
+                .placeholder(R.mipmap.placeholder)
+                .error(R.mipmap.error)
+                .into(movieAdapterViewHolder.mMoviePosterImageView);
 
     }
 
@@ -74,14 +81,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     }
 
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public final ImageView mMoviePosterImageView;
-        public final TextView mMovieTitleTextView;
+
+        @BindView(R.id.iv_item_poster) ImageView mMoviePosterImageView;
+        @BindView(R.id.tv_item_title) TextView mMovieTitleTextView;
 
         public MovieAdapterViewHolder(View view) {
             super(view);
-            mMoviePosterImageView = (ImageView) view.findViewById(R.id.iv_item_poster);
-            mMovieTitleTextView = (TextView) view.findViewById(R.id.tv_item_title);
-
+            ButterKnife.bind(this, view);
 
             view.setOnClickListener(this);
         }

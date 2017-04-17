@@ -1,9 +1,12 @@
 package com.alc.popularmovies.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by dannytee on 17/04/2017.
  */
-public class MovieItem {
+public class MovieItem implements Parcelable {
 
     private String vote_average;
 
@@ -188,5 +191,15 @@ public class MovieItem {
     public void setPopularity (String popularity)
     {
         this.popularity = popularity;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }
