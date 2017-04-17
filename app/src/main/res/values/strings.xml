@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">PopularMovies</string>
+    <string name="movie_image">movie image</string>
+    <string name="most_popular">Most Popular</string>
+    <string name="highest_rated">Highest Rated</string>
+    <string name="error_message">An error has occurred. Please try again by clicking REFRESH</string>
+    <string name="refresh">Refresh</string>
+</resources>
