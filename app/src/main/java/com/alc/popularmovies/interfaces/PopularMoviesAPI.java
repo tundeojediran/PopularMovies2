@@ -4,6 +4,7 @@ import com.alc.popularmovies.models.MovieDBResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -28,5 +29,22 @@ public interface PopularMoviesAPI {
     */
     @GET("top_rated")
     Call<MovieDBResponse> getHighestRatedMovies(@Query("api_key") String api_key);
+
+
+    /*
+    * Retrofit get annotation with URL
+    * And method that will return trailers for a movie.
+   */
+    @GET("movie/{movie_id}/videos")
+    Call<MovieDBResponse> getMovieTrailers(@Path("movie_id") String movie_id, @Query("api_key") String api_key);
+
+
+    /*
+   * Retrofit get annotation with URL
+   * And method that will return the reviews for a movie.
+  */
+    @GET("movie/{movie_id}/videos")
+    Call<MovieDBResponse> getMovieReviews(@Path("movie_id") String movie_id, @Query("api_key") String api_key);
+
 
 }
