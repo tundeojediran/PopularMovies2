@@ -53,6 +53,35 @@ public class MovieItem implements Parcelable {
         this.popularity = popularity;
     }
 
+    protected MovieItem(Parcel in) {
+        vote_average = in.readString();
+        backdrop_path = in.readString();
+        adult = in.readString();
+        id = in.readString();
+        title = in.readString();
+        overview = in.readString();
+        original_language = in.readString();
+        genre_ids = in.createStringArray();
+        release_date = in.readString();
+        original_title = in.readString();
+        vote_count = in.readString();
+        poster_path = in.readString();
+        video = in.readString();
+        popularity = in.readString();
+    }
+
+    public static final Creator<MovieItem> CREATOR = new Creator<MovieItem>() {
+        @Override
+        public MovieItem createFromParcel(Parcel in) {
+            return new MovieItem(in);
+        }
+
+        @Override
+        public MovieItem[] newArray(int size) {
+            return new MovieItem[size];
+        }
+    };
+
     public String getVote_average ()
     {
         return vote_average;
@@ -200,6 +229,19 @@ public class MovieItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-
+        parcel.writeString(vote_average);
+        parcel.writeString(backdrop_path);
+        parcel.writeString(adult);
+        parcel.writeString(id);
+        parcel.writeString(title);
+        parcel.writeString(overview);
+        parcel.writeString(original_language);
+        parcel.writeStringArray(genre_ids);
+        parcel.writeString(release_date);
+        parcel.writeString(original_title);
+        parcel.writeString(vote_count);
+        parcel.writeString(poster_path);
+        parcel.writeString(video);
+        parcel.writeString(popularity);
     }
 }
