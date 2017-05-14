@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private MovieAdapter mMovieAdapter;
     private PopularMoviesAPI popularMoviesAPIService;
 
+    public static final String MOVIE_ID = "movie_id";
     public static final String MOVIE_TITLE = "movie_title";
     public static final String MOVIE_IMAGE = "movie_image";
     public static final String MOVIE_RELEASE_DATE = "movie_release_date";
@@ -229,6 +230,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         Class movieDetailsClass = MovieDetailsActivity.class;
         Intent movieDetailsIntent = new Intent(context, movieDetailsClass);
 
+        movieDetailsIntent.putExtra(MOVIE_ID, movieItem.getId());
         movieDetailsIntent.putExtra(MOVIE_TITLE, movieItem.getTitle());
         movieDetailsIntent.putExtra(MOVIE_IMAGE, movieItem.getPoster_path());
         movieDetailsIntent.putExtra(MOVIE_RELEASE_DATE, movieItem.getRelease_date());
@@ -265,6 +267,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         if (id == R.id.action_rated) {
             loadHighestRatedMovies();
+            return true;
+        }
+
+        if (id == R.id.action_favourites) {
+            //TODO load favourites
             return true;
         }
 

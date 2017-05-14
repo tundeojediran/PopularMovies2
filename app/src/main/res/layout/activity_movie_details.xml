@@ -17,36 +17,60 @@
         <ImageView
             android:id="@+id/iv_poster_image"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/description_movie_poster"/>
 
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/iv_poster_image"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            tools:text="Movie title"/>
 
         <TextView
             android:id="@+id/tv_release_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_title"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            tools:text="Release date"
+            />
 
         <TextView
             android:id="@+id/tv_votes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_release_date"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            tools:text="Votes"/>
 
         <TextView
             android:id="@+id/tv_plot_synopsis"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_votes"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            tools:text="Synopsis"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            />
 
+
+        <include
+            android:id="@+id/trailer_list"
+            layout="@layout/trailer_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_plot_synopsis"
+            />
+
+
+        <include
+            android:id="@+id/review_list"
+            layout="@layout/review_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/trailer_list"/>
 
     </RelativeLayout>
 </ScrollView>

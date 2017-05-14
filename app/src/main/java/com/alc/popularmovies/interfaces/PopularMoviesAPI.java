@@ -1,6 +1,8 @@
 package com.alc.popularmovies.interfaces;
 
 import com.alc.popularmovies.models.MovieDBResponse;
+import com.alc.popularmovies.models.ReviewListResponse;
+import com.alc.popularmovies.models.TrailerListResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -36,7 +38,7 @@ public interface PopularMoviesAPI {
     * And method that will return trailers for a movie.
    */
     @GET("movie/{movie_id}/videos")
-    Call<MovieDBResponse> getMovieTrailers(@Path("movie_id") String movie_id, @Query("api_key") String api_key);
+    Call<TrailerListResponse> getMovieTrailers(@Path("movie_id") String movie_id, @Query("api_key") String api_key);
 
 
     /*
@@ -44,7 +46,7 @@ public interface PopularMoviesAPI {
    * And method that will return the reviews for a movie.
   */
     @GET("movie/{movie_id}/videos")
-    Call<MovieDBResponse> getMovieReviews(@Path("movie_id") String movie_id, @Query("api_key") String api_key);
+    Call<ReviewListResponse> getMovieReviews(@Path("movie_id") String movie_id, @Query("api_key") String api_key);
 
 
 }

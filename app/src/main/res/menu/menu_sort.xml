@@ -20,4 +20,10 @@
         android:title="@string/highest_rated"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/action_favourites"
+        android:orderInCategory="4"
+        android:title="@string/favourites"
+        app:showAsAction="ifRoom" />
+
 </menu>

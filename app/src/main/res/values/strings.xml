@@ -5,4 +5,6 @@
     <string name="highest_rated">Highest Rated</string>
     <string name="error_message">An error has occurred. Please try again by clicking REFRESH</string>
     <string name="refresh">Refresh</string>
+    <string name="description_movie_poster">movie poster</string>
+    <string name="favourites">Favourites</string>
 </resources>
