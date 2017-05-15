@@ -37,7 +37,7 @@ public interface PopularMoviesAPI {
     * Retrofit get annotation with URL
     * And method that will return trailers for a movie.
    */
-    @GET("movie/{movie_id}/videos")
+    @GET("{movie_id}/videos")
     Call<TrailerListResponse> getMovieTrailers(@Path("movie_id") String movie_id, @Query("api_key") String api_key);
 
 
@@ -45,7 +45,7 @@ public interface PopularMoviesAPI {
    * Retrofit get annotation with URL
    * And method that will return the reviews for a movie.
   */
-    @GET("movie/{movie_id}/videos")
+    @GET("{movie_id}/reviews")
     Call<ReviewListResponse> getMovieReviews(@Path("movie_id") String movie_id, @Query("api_key") String api_key);
 
 

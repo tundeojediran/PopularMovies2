@@ -48,6 +48,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewAdap
         ReviewItem reviewItem = reviewItems.get(position);
 
         reviewAdapterViewHolder.mReviewTextView.setText(reviewItem.getContent());
+        reviewAdapterViewHolder.mAuthorTextView.setText(reviewItem.getAuthor());
 
 
     }
@@ -68,6 +69,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewAdap
     public class ReviewAdapterViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.textview_review) TextView mReviewTextView;
+        @BindView(R.id.textview_author) TextView mAuthorTextView;
 
         public ReviewAdapterViewHolder(View itemView) {
             super(itemView);

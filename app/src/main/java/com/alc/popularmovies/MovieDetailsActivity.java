@@ -1,12 +1,17 @@
 package com.alc.popularmovies;
 
 import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,10 +21,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.alc.popularmovies.adapters.FavouritesCursorAdapter;
 import com.alc.popularmovies.adapters.MovieAdapter;
 import com.alc.popularmovies.adapters.ReviewAdapter;
 import com.alc.popularmovies.adapters.TrailerAdapter;
+import com.alc.popularmovies.data.PopularMoviesContract;
 import com.alc.popularmovies.interfaces.PopularMoviesAPI;
 import com.alc.popularmovies.models.MovieDBResponse;
 import com.alc.popularmovies.models.MovieItem;
@@ -38,23 +46,31 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MovieDetailsActivity extends AppCompatActivity implements TrailerAdapter.TrailerAdapterOnClickHandler {
+public class MovieDetailsActivity extends AppCompatActivity implements TrailerAdapter.TrailerAdapterOnClickHandler
+       {
+
+    private static final String TAG = MovieDetailsActivity.class.getSimpleName();
 
     @BindView(R.id.iv_poster_image)  ImageView mPosterImageView;
-    @BindView(R.id.tv_title) TextView mMovieTitle;
+    @BindView(R.id.tv_title) TextView mMovieTitleTextView;
     @BindView(R.id.tv_release_date) TextView mReleaseDateTextView;
     @BindView(R.id.tv_votes) TextView mVotesTextView;
     @BindView(R.id.tv_plot_synopsis) TextView mSynopsisTextView;
     @BindView(R.id.recyclerview_reviews) RecyclerView mRecyclerViewReviews;
     @BindView(R.id.recyclerview_trailers) RecyclerView mRecyclerViewTrailers;
+    @BindView(R.id.btn_favourite) Button mFavouriteButton;
 
-    @BindView(R.id.pb_loading_indicator)
-    ProgressBar mLoadingIndicator;
+    String mMovieId, mMovieTitle;
+
+//    @BindView(R.id.pb_loading_indicator)
+//    ProgressBar mLoadingIndicator;
 
 
     private ReviewAdapter mReviewAdapter;
     private TrailerAdapter mTrailerAdapter;
     private PopularMoviesAPI popularMoviesAPIService;
+
+    private boolean mChargingStatus;
 
 
     @Override
@@ -62,14 +78,15 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
 
-        ButterKnife.bind(this);
+        mChargingStatus = false;
 
+        ButterKnife.bind(this);
 
         Intent receivedIntent = getIntent();
 
-        String movieId = receivedIntent.getStringExtra(MainActivity.MOVIE_ID);
+        mMovieId = receivedIntent.getStringExtra(MainActivity.MOVIE_ID);
         String posterImage = receivedIntent.getStringExtra(MainActivity.MOVIE_IMAGE);
-        String title = receivedIntent.getStringExtra(MainActivity.MOVIE_TITLE);
+        mMovieTitle = receivedIntent.getStringExtra(MainActivity.MOVIE_TITLE);
         String date = receivedIntent.getStringExtra(MainActivity.MOVIE_RELEASE_DATE);
         String votes = receivedIntent.getStringExtra(MainActivity.MOVIE_VOTES);
         String synopsis = receivedIntent.getStringExtra(MainActivity.MOVIE_SYNOPSIS);
@@ -77,7 +94,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
         String posterPath = "http://image.tmdb.org/t/p/w500/" + posterImage;
         Picasso.with(this).load(posterPath).into(mPosterImageView);
 
-        mMovieTitle.setText(title);
+        mMovieTitleTextView.setText(mMovieTitle);
         mReleaseDateTextView.setText(date);
         mVotesTextView.setText(votes);
         mSynopsisTextView.setText(synopsis);
@@ -98,10 +115,54 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
         mTrailerAdapter = new TrailerAdapter(this);
         mRecyclerViewTrailers.setAdapter(mTrailerAdapter);
 
+        Log.d("movie id", mMovieId);
+        loadReviews(mMovieId);
+        loadMovieTrailers(mMovieId);
 
-        loadReviews(movieId);
-        loadMovieTrailers(movieId);
+        mFavouriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggleFavouriteStatus(mChargingStatus);
+            }
+        });
 
+    }
+
+    // add or remove a movie from favourite list
+    private void toggleFavouriteStatus(boolean isFavourite) {
+        if (isFavourite) {
+            removeFromFavourites();
+        } else {
+            addToFavourites();
+        }
+
+    }
+
+    // add movie to favourites
+    private void addToFavourites() {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PopularMoviesContract.MovieEntry.COLUMN_MOVIE_ID, mMovieId);
+        contentValues.put(PopularMoviesContract.MovieEntry.COLUMN_MOVIE_TITLE, mMovieTitle);
+
+        Uri uri = getContentResolver().insert(PopularMoviesContract.MovieEntry.CONTENT_URI, contentValues);
+
+        if(uri != null) {
+            Toast.makeText(getBaseContext(), uri.toString(), Toast.LENGTH_LONG).show();
+        }
+
+        mFavouriteButton.setText(getText(R.string.add_favourite));
+
+    }
+
+    // remove movie from favourites
+    private void removeFromFavourites() {
+        Uri uri = PopularMoviesContract.MovieEntry.CONTENT_URI;
+        uri = uri.buildUpon().appendPath(mMovieId).build();
+
+        // Delete a single row of data using a ContentResolver
+        getContentResolver().delete(uri, null, null);
+
+        mFavouriteButton.setText(getText(R.string.remove_favourite));
     }
 
 
@@ -147,6 +208,8 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
             @Override
             public void onResponse(Call<ReviewListResponse> call, Response<ReviewListResponse> response) {
 
+                Log.d("response", response.code()+"");
+
                 if (response.isSuccessful()) {
 //                    showReviewDataView();
 //                    mLoadingIndicator.setVisibility(View.INVISIBLE);
@@ -164,7 +227,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
 
 
                     } catch (Exception e) {
-                        Log.d("onResponse", "There is an error");
+                        Log.d("onResponse", "There is a review error");
                         e.printStackTrace();
                     }
 
@@ -210,7 +273,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
 
 
                     } catch (Exception e) {
-                        Log.d("onResponse", "There is an error");
+                        Log.d("onResponse", "There is a movie trailer error");
                         e.printStackTrace();
                     }
 
@@ -268,4 +331,6 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
             startActivity(browserIntent);
         }
     }
+
+
 }

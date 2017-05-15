@@ -2,8 +2,13 @@ package com.alc.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -17,7 +22,9 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.alc.popularmovies.adapters.FavouritesCursorAdapter;
 import com.alc.popularmovies.adapters.MovieAdapter;
+import com.alc.popularmovies.data.PopularMoviesContract;
 import com.alc.popularmovies.interfaces.PopularMoviesAPI;
 import com.alc.popularmovies.models.MovieDBResponse;
 import com.alc.popularmovies.models.MovieItem;
@@ -31,13 +38,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
+public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler,  LoaderManager.LoaderCallbacks<Cursor> {
 
     @BindView(R.id.rv_movies) RecyclerView mRecyclerView;
     @BindView(R.id.tv_error_message_display) TextView mErrorMessageDisplay;
     @BindView(R.id.pb_loading_indicator) ProgressBar mLoadingIndicator;
 
     private MovieAdapter mMovieAdapter;
+    private FavouritesCursorAdapter favouritesCursorAdapter;
     private PopularMoviesAPI popularMoviesAPIService;
 
     public static final String MOVIE_ID = "movie_id";
@@ -47,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     public static final String MOVIE_VOTES = "movie_votes";
     public static final String MOVIE_SYNOPSIS = "movie_synopsis";
 
+    private static final String TAG = MainActivity.class.getSimpleName();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +65,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         ButterKnife.bind(this);
 
-        GridLayoutManager layoutManager
+        GridLayoutManager gridLayoutManager
                 = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
 
-        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
         mMovieAdapter = new MovieAdapter(this);
@@ -272,13 +282,78 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         if (id == R.id.action_favourites) {
             //TODO load favourites
+            loadFavouriteMovies();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    private void loadFavouriteMovies() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        favouritesCursorAdapter = new FavouritesCursorAdapter(this);
+        mRecyclerView.setAdapter(favouritesCursorAdapter);
+    }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new AsyncTaskLoader<Cursor>(this) {
 
+            // Initialize a Cursor, this will hold all the movie data
+            Cursor mMovieData = null;
+
+            // onStartLoading() is called when a loader first starts loading data
+            @Override
+            protected void onStartLoading() {
+                if (mMovieData != null) {
+                    // Delivers any previously loaded data immediately
+                    deliverResult(mMovieData);
+                } else {
+                    // Force a new load
+                    forceLoad();
+                }
+            }
+
+            // loadInBackground() performs asynchronous loading of data
+            @Override
+            public Cursor loadInBackground() {
+                // Will implement to load data
+
+                // Query and load all task data in the background; sort by priority
+                // [Hint] use a try/catch block to catch any errors in loading data
+
+                try {
+                    return getContentResolver().query(PopularMoviesContract.MovieEntry.CONTENT_URI,
+                            null,
+                            null,
+                            null,
+                            null);
+
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to asynchronously load data.");
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            // deliverResult sends the result of the load, a Cursor, to the registered listener
+            public void deliverResult(Cursor data) {
+                mMovieData = data;
+                super.deliverResult(data);
+            }
+        };
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        favouritesCursorAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        favouritesCursorAdapter.swapCursor(null);
+    }
 
 }

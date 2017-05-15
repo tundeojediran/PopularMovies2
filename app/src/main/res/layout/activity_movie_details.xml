@@ -55,22 +55,48 @@
             android:layout_marginBottom="@dimen/activity_horizontal_margin"
             />
 
+        <Button
+            android:id="@+id/btn_favourite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/favourites"
+            android:textColor="@color/white"
+            android:layout_below="@id/tv_plot_synopsis"
+            android:textSize="12sp"
+            />
+
+        <TextView
+            android:id="@+id/label_movie_trailers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_movie_trailers"
+            android:layout_below="@id/btn_favourite"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            />
 
         <include
             android:id="@+id/trailer_list"
             layout="@layout/trailer_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tv_plot_synopsis"
+            android:layout_below="@id/label_movie_trailers"
             />
 
+
+        <TextView
+            android:id="@+id/label_movie_reviews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_reviews"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:layout_below="@id/trailer_list"/>
 
         <include
             android:id="@+id/review_list"
             layout="@layout/review_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/trailer_list"/>
+            android:layout_below="@id/label_movie_reviews"/>
 
     </RelativeLayout>
 </ScrollView>

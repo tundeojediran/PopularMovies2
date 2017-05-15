@@ -11,6 +11,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/activity_horizontal_margin"
-        tools:text="sample review" />
+        tools:text="sample review"
+        android:textStyle="italic"
+        android:textSize="14sp"
+        tools:layout_editor_absoluteY="8dp"
+        tools:layout_editor_absoluteX="16dp" />
+    <TextView
+        android:id="@+id/textview_author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        tools:text="author"
+        android:layout_marginTop="2dp"
+        app:layout_constraintTop_toBottomOf="@+id/textview_review"
+        android:layout_marginStart="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="16dp"
+        android:textSize="14sp"/>
+
+
 
 </android.support.constraint.ConstraintLayout>

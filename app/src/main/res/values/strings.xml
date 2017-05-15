@@ -7,4 +7,8 @@
     <string name="refresh">Refresh</string>
     <string name="description_movie_poster">movie poster</string>
     <string name="favourites">Favourites</string>
+    <string name="label_movie_trailers">Movie trailers</string>
+    <string name="label_reviews">Reviews</string>
+    <string name="remove_favourite">Remove from Favourites</string>
+    <string name="add_favourite">Add to Favourites</string>
 </resources>
