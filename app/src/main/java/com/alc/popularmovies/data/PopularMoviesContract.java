@@ -7,7 +7,10 @@ import android.provider.BaseColumns;
  * Created by dannytee on 15/05/2017.
  */
 
-public class PopularMoviesContract {
+public final class PopularMoviesContract {
+
+
+    private PopularMoviesContract(){}
 
     public static final String CONTENT_AUTHORITY = "com.alc.popularmovies";
 

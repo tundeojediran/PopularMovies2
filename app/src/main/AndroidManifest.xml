@@ -3,7 +3,7 @@
     package="com.alc.popularmovies">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
 
     <application
@@ -12,20 +12,23 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MovieDetailsActivity"
+        <activity
+            android:name=".MovieDetailsActivity"
             android:parentActivityName=".MainActivity"></activity>
 
         <provider
             android:name="com.alc.popularmovies.data.MovieProvider"
             android:authorities="com.alc.popularmovies"
-            android:exported="false"/>
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -19,7 +20,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.alc.popularmovies.adapters.FavouritesCursorAdapter;
@@ -30,6 +33,7 @@ import com.alc.popularmovies.models.MovieDBResponse;
 import com.alc.popularmovies.models.MovieItem;
 import com.alc.popularmovies.services.ServiceGenerator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -48,6 +52,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private FavouritesCursorAdapter favouritesCursorAdapter;
     private PopularMoviesAPI popularMoviesAPIService;
 
+    ArrayList<MovieItem> mResponseMovieItems;
+    MovieDBResponse mMovieDBResponse;
+
     public static final String MOVIE_ID = "movie_id";
     public static final String MOVIE_TITLE = "movie_title";
     public static final String MOVIE_IMAGE = "movie_image";
@@ -56,6 +63,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     public static final String MOVIE_SYNOPSIS = "movie_synopsis";
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    private static final String MOVIES_LIST = "movies_list";
+
 
 
     @Override
@@ -75,7 +85,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mRecyclerView.setAdapter(mMovieAdapter);
 
 
-        loadPopularMovies();
+            loadPopularMovies();
+
 
     }
 
@@ -129,13 +140,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                     mLoadingIndicator.setVisibility(View.INVISIBLE);
 
                     try {
-                        MovieDBResponse movieDBResponse = response.body();
-                        Log.d("totalpages", movieDBResponse.getTotal_pages());
+                        mMovieDBResponse = response.body();
+                        Log.d("response body", mMovieDBResponse.toString());
+                        Log.d("totalpages", mMovieDBResponse.getTotal_pages());
 
-                        List<MovieItem> movieItems = movieDBResponse.getResults();
+                        mResponseMovieItems = mMovieDBResponse.getResults();
 
-
-                        mMovieAdapter.setMovieData(movieItems);
+                        mMovieAdapter.setMovieData(mResponseMovieItems);
 
 
                     } catch (Exception e) {
@@ -177,13 +188,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
 
                     try {
-                        MovieDBResponse movieDBResponse = response.body();
-                        List<MovieItem> movieItems = movieDBResponse.getResults();
+                        mMovieDBResponse = response.body();
+                        mResponseMovieItems = mMovieDBResponse.getResults();
 
-                        Log.d("response", movieDBResponse.getTotal_pages());
-                        Log.d("bull", movieItems.size() + "");
+                        Log.d("response", mMovieDBResponse.getTotal_pages());
+                        Log.d("bull", mResponseMovieItems.size() + "");
 
-                        mMovieAdapter.setMovieData(movieItems);
+                        mMovieAdapter.setMovieData(mResponseMovieItems);
 
 
                     } catch (Exception e) {
@@ -257,6 +268,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         /* Use the inflater's inflate method to inflate our menu layout to this menu */
         inflater.inflate(R.menu.menu_sort, menu);
         /* Return true so that the menu is displayed in the Toolbar */
+
+//        MenuItem item = menu.findItem(R.id.spinner_sort);
+//        Spinner sortSpinner = (Spinner) MenuItemCompat.getActionView(item);
+//
+//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+//                R.array.spinner_list_item_array, android.R.layout.simple_spinner_item);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         return true;
     }
 
@@ -271,11 +290,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         }
 
         if (id == R.id.action_popular) {
+            mMovieAdapter.setMovieData(null);
             loadPopularMovies();
             return true;
         }
 
         if (id == R.id.action_rated) {
+            mMovieAdapter.setMovieData(null);
             loadHighestRatedMovies();
             return true;
         }
@@ -356,4 +377,25 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         favouritesCursorAdapter.swapCursor(null);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (mMovieDBResponse != null){
+            outState.putParcelableArrayList(MOVIES_LIST, mMovieDBResponse.getResults());
+        }
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        if (savedInstanceState != null){
+            mResponseMovieItems =  savedInstanceState.getParcelableArrayList(MOVIES_LIST);
+            mMovieAdapter.setMovieData(mResponseMovieItems);
+        }
+
+
+    }
 }

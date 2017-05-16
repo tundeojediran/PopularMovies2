@@ -1,14 +1,18 @@
 package com.alc.popularmovies.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by dannytee on 17/04/2017.
  */
 
-public class MovieDBResponse {
+public class MovieDBResponse implements Parcelable {
 
-    private List<MovieItem> results;
+    private ArrayList<MovieItem> results;
 
     private String page;
 
@@ -16,19 +20,38 @@ public class MovieDBResponse {
 
     private String total_results;
 
-    public MovieDBResponse(List<MovieItem> results, String page, String total_pages, String total_results) {
+    public MovieDBResponse(ArrayList<MovieItem> results, String page, String total_pages, String total_results) {
         this.results = results;
         this.page = page;
         this.total_pages = total_pages;
         this.total_results = total_results;
     }
 
-    public List<MovieItem> getResults ()
+    protected MovieDBResponse(Parcel in) {
+        results = in.createTypedArrayList(MovieItem.CREATOR);
+        page = in.readString();
+        total_pages = in.readString();
+        total_results = in.readString();
+    }
+
+    public static final Creator<MovieDBResponse> CREATOR = new Creator<MovieDBResponse>() {
+        @Override
+        public MovieDBResponse createFromParcel(Parcel in) {
+            return new MovieDBResponse(in);
+        }
+
+        @Override
+        public MovieDBResponse[] newArray(int size) {
+            return new MovieDBResponse[size];
+        }
+    };
+
+    public ArrayList<MovieItem> getResults ()
     {
         return results;
     }
 
-    public void setResults (List<MovieItem> results)
+    public void setResults (ArrayList<MovieItem> results)
     {
         this.results = results;
     }
@@ -63,4 +86,16 @@ public class MovieDBResponse {
         this.total_results = total_results;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeTypedList(results);
+        parcel.writeString(page);
+        parcel.writeString(total_pages);
+        parcel.writeString(total_results);
+    }
 }

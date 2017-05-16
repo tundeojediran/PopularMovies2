@@ -6,23 +6,34 @@
         android:id="@+id/action_refresh"
         android:orderInCategory="1"
         android:title="@string/refresh"
+        android:icon="@mipmap/ic_autorenew_white_24dp"
         app:showAsAction="always" />
+
+    <!--<item-->
+        <!--android:id="@+id/spinner_sort"-->
+        <!--android:orderInCategory="2"-->
+        <!--android:icon="@android:drawable/ic_menu_sort_by_size"-->
+        <!--android:title="@string/actionbar_spinner"-->
+        <!--app:actionViewClass="android.widget.Spinner"-->
+        <!--app:showAsAction="always" />-->
 
     <item
         android:id="@+id/action_popular"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:title="@string/most_popular"
         app:showAsAction="ifRoom" />
 
+
+
     <item
         android:id="@+id/action_rated"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         android:title="@string/highest_rated"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_favourites"
-        android:orderInCategory="4"
+        android:orderInCategory="5"
         android:title="@string/favourites"
         app:showAsAction="ifRoom" />
 

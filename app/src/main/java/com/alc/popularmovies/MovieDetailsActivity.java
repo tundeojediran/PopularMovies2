@@ -60,10 +60,8 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
     @BindView(R.id.recyclerview_trailers) RecyclerView mRecyclerViewTrailers;
     @BindView(R.id.btn_favourite) Button mFavouriteButton;
 
-    String mMovieId, mMovieTitle;
+    private String mMovieId, mMovieTitle;
 
-//    @BindView(R.id.pb_loading_indicator)
-//    ProgressBar mLoadingIndicator;
 
 
     private ReviewAdapter mReviewAdapter;
